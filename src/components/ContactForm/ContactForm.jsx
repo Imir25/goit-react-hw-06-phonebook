@@ -1,23 +1,26 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, getContacts } from 'components/redux/contactsSlice';
+import { addContact, getContacts } from '../../redux/contactsSlice';
 
 export const ContactForm = () => {
   const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
 
-  const [contactName, setcontactName] = useState('');
+  const [contactName, setContactName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (contacts.some(({ name }) => name === contactName)) {
+    const normalizedContactName = contactName.toLowerCase();
+
+    if (contacts.some(({ name }) => name.toLowerCase() === normalizedContactName)) {
       window.alert(`${contactName} is already in your contacts`);
       return;
     }
+
     dispatch(
       addContact({
         name: contactName,
@@ -26,16 +29,16 @@ export const ContactForm = () => {
       })
     );
 
-    setcontactName('');
+    setContactName('');
     setNumber('');
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { value, name } = e.target;
 
     switch (name) {
       case 'name':
-        setcontactName(value);
+        setContactName(value);
         break;
       case 'number':
         setNumber(value);
@@ -56,7 +59,7 @@ export const ContactForm = () => {
           name="name"
           value={contactName}
           onChange={handleChange}
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          pattern="^[a-zA-Zа-яА-Я]+((['\s-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
         />
